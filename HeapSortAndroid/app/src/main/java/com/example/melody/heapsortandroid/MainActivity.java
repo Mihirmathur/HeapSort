@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -115,25 +116,23 @@ public class MainActivity extends AppCompatActivity {
         int compostCount = 0;
         int landfillCount = 0;
 
-        String[] tagNames;
-        int[] tagScores;
+        ArrayList<String> tagNames = new ArrayList<String>();
 
         //put tag names in tagNames
-        for (int i = 0; i < tags[].Name.size(); i++) {
-            tagNames[i] = tags[i].Name;
-        }
-
-        //put tag scores in tagScores
-        for (int i = 0; i < tags[].Score.size(); i++) {
-            tagScores[i] = tags[i].Score;
+        for (int i = 0; i < categories.length(); i++) {
+            try {
+                tagNames.set(i,categories.getJSONObject(i).getString("NAME"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         for (int i = 0; i < tagNames.size(); i++) {
-            if (tagNames[i] == recycle[i]) {
+            if (tagNames.get(i).equals(recycle[i])) {
                 recycleCount++;
-            } else if (tagNames[i] == compost[i]) {
+            } else if (tagNames.get(i).equals(compost[i])) {
                 compostCount++;
-            } else if (tagNames[i] == landfill[i]) {
+            } else if (tagNames.get(i).equals(landfill[i])) {
                 landfillCount++;
             }
         }
