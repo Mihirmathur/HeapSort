@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">HeapSortAndroid</string>
+    <string name="subscription_key">59f9c8a420e146a98bf31cc35e9190f1</string>
+
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
