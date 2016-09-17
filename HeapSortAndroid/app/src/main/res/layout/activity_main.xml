@@ -30,15 +30,15 @@
         <Button
             android:id="@+id/clickme"
             android:layout_width="match_parent"
-            android:layout_height="600px"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@drawable/click_button"
             android:text="click"/>
 
         <ImageView
             android:id="@+id/thumbnail"
-            android:layout_width="300px"
-            android:layout_height="300px"
+            android:layout_width="700px"
+            android:layout_height="700px"
             android:layout_gravity="center"/>
 
     </FrameLayout>
