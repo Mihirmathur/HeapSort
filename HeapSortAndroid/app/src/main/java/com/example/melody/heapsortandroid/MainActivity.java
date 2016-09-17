@@ -21,6 +21,10 @@ import com.microsoft.projectoxford.vision.VisionServiceRestClient;
 import com.microsoft.projectoxford.vision.contract.AnalysisResult;
 import com.microsoft.projectoxford.vision.rest.VisionServiceException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getAnalysisResult(Bitmap b) throws VisionServiceException, IOException {
+    private JSONArray getAnalysisResult(Bitmap b) throws VisionServiceException, IOException, JSONException {
         Gson gson = new Gson();
         String[] features = {"Categories"};
         String[] details = {};
@@ -79,69 +83,67 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
 
         AnalysisResult v =  this.client.analyzeImage(inputStream, features, details);
-        return gson.toJson(v);
+        return (JSONArray) new JSONObject(gson.toJson(v)).get("categories");
     }
 
-    private class ComputerVision extends AsyncTask<Bitmap, Void, String> {
+    private class ComputerVision extends AsyncTask<Bitmap, Void, JSONArray> {
 
         @Override
-        protected String doInBackground(Bitmap... params) {
+        protected JSONArray doInBackground(Bitmap... params) {
             try {
                 return getAnalysisResult(params[0]);
-            } catch (VisionServiceException e) {
-                e.printStackTrace();
-                return null;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            clickme.setText(result);
+        protected void onPostExecute(JSONArray result) {
+            clickme.setText(result.toString());
+            trashCategories(result);
         }
     }
 
-//    String trashCategories() {
-//
-//        String[] recycle = {"bottle", "can"};
-//        String[] compost = {"food"};
-//        String[] landfill = {"", ""};
-//
-//        int recycleCount = 0;
-//        int compostCount = 0;
-//        int landfillCount = 0;
-//
-//        String[] tagNames;
-//        int[] tagScores;
-//
-//        //put tag names in tagNames
-//        for (int i = 0; i < tags[].Name.size(); i++) {
-//            tagNames[i] = tags[i].Name;
-//        }
-//
-//        //put tag scores in tagScores
-//        for (int i = 0; i < tags[].Score.size(); i++) {
-//            tagScores[i] = tags[i].Score;
-//        }
-//
-//        for (int i = 0; i < tagNames.size(); i++) {
-//            if (tagNames[i] == recycle[i]) {
-//                recycleCount++;
-//            } else if (tagNames[i] == compost[i]) {
-//                compostCount++;
-//            } else if (tagNames[i] == landfill[i]) {
-//                landfillCount++;
-//            }
-//        }
-//
-//        if (recycleCount > compostCount && recycleCount > landfillCount) {
-//            return "Please throw into the RECYCLE bin.";
-//        } else if (compostCount > recycleCount && compostCount > landfillCount) {
-//            return "Please throw into the COMPOST bin.";
-//        } else
-//            return "Please throw into the LANDFILL bin.";
-//    }
+    String trashCategories(JSONArray categories) {
+
+        String[] recycle = {"bottle", "can", "drink"};
+        String[] compost = {"food"};
+        String[] landfill = {"", ""};
+
+        int recycleCount = 0;
+        int compostCount = 0;
+        int landfillCount = 0;
+
+        String[] tagNames;
+        int[] tagScores;
+
+        //put tag names in tagNames
+        for (int i = 0; i < tags[].Name.size(); i++) {
+            tagNames[i] = tags[i].Name;
+        }
+
+        //put tag scores in tagScores
+        for (int i = 0; i < tags[].Score.size(); i++) {
+            tagScores[i] = tags[i].Score;
+        }
+
+        for (int i = 0; i < tagNames.size(); i++) {
+            if (tagNames[i] == recycle[i]) {
+                recycleCount++;
+            } else if (tagNames[i] == compost[i]) {
+                compostCount++;
+            } else if (tagNames[i] == landfill[i]) {
+                landfillCount++;
+            }
+        }
+
+        if (recycleCount > compostCount && recycleCount > landfillCount) {
+            return "Please throw into the RECYCLE bin.";
+        } else if (compostCount > recycleCount && compostCount > landfillCount) {
+            return "Please throw into the COMPOST bin.";
+        } else
+            return "Please throw into the LANDFILL bin.";
+    }
 
 }
