@@ -3,6 +3,8 @@
 <head>
   <title><%= title %></title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" rel="stylesheet">
 </head>
 <body>
 
@@ -10,16 +12,17 @@
 
 
   <div class = "container">
-  <div class="outer_circ">
-  <div id="my_camera" style="width:500px; height:400px;"></div>
-  <div id="my_result"></div>
-    <div class="middle_circ">
-      <div class="innermost_circ">
-        <h1 id="cam_trigger">Heap Sort</h1>
+    <div class="outer_circ">
+      <div id="my_camera" style="width:500px; height:400px;"></div>
+      <div id="my_result"></div>
+      <h1 id="cam_clicker" onclick="take_snapshot()">CLICK</h1>
+      <div class="middle_circ">
+        <div class="innermost_circ">
+        <h1 id="cam_trigger">HEAP SORT</h1>
 
+        </div>
       </div>
     </div>
-  </div>
   </div>
 
   
@@ -32,13 +35,31 @@
 <script src="/javascripts/jquery.easing.js"></script> 
 <script language="JavaScript">
 
+Webcam.set({
+        width: 400,
+        height: 300,
+        dest_width: 400,
+        dest_height: 300,
+        image_format: 'jpeg',
+        jpeg_quality: 90,
+        force_flash: false,
+        flip_horiz: true,
+        fps: 45
+    });
+
   $('#cam_trigger').on("click", function(){
-    $('.middle_circ').toggle(500, function(){
+    $('.middle_circ').toggle(500,"easeInOutCubic", function(){
+
       $('.outer_circ').animate({'height': '550px', 'width': '550px'}, 2000, "easeInOutCubic");
+      $('#my_camera').toggle(500, function(){
+        Webcam.attach( '#my_camera', function(){
+
+        });
+        $('#cam_clicker').toggle(500);
+      });
+      
     });
-    $('#my_camera').toggle(500, function(){
-      Webcam.attach( '#my_camera' );
-    });
+    
     
     
     
@@ -46,7 +67,12 @@
 
   function take_snapshot() {
     Webcam.snap( function(data_uri) {
-      document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+      $('#my_camera').toggle(500);
+      $('#cam_clicker').toggle(500, function(){
+        document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+        $('#my_result').toggle(500);
+      });
+      
     } );
   }
 </script> 

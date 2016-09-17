@@ -1,5 +1,6 @@
 body {
-  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
+ 	font-family: 'Open Sans';
+ 	font-size: .7em;
   margin: 0 auto;
   padding: 0;
   height: 100%;
@@ -18,6 +19,8 @@ a {
 }
 
 .innermost_circ{
+	font-family: 'Montserrat';
+	font-size: .9em;
 	height: 220px;
 	width: 220px;
 	display: flex;
@@ -58,4 +61,14 @@ a {
 
 #my_camera{
 	display: none;
+}
+
+#my_result{
+	display: none;
+}
+
+#cam_clicker{
+	display: none;
+	position: absolute;
+	top: 70%;
 }
