@@ -18,7 +18,11 @@ android {
         }
     }
 }
-
+packagingOptions {
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE-FIREBASE.txt'
+    exclude 'META-INF/NOTICE'
+}
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
@@ -26,4 +30,5 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.microsoft.projectoxford:vision:1.0.354'
+    compile 'com.firebase:firebase-client-android:2.5.2.+'
 }
