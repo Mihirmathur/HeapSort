@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.microsoft.projectoxford.vision.VisionServiceClient;
@@ -24,17 +25,20 @@ import com.microsoft.projectoxford.vision.rest.VisionServiceException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageView thumbnail;
     Button clickme;
+    TextView results;
     private VisionServiceClient client;
 
 
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
         clickme = (Button) findViewById(R.id.clickme);
+        results = (TextView) findViewById(R.id.results);
 
         setSupportActionBar(toolbar);
         if (client==null){
@@ -102,15 +107,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONArray result) {
             clickme.setText(result.toString());
-            trashCategories(result);
+            results.setText(trashCategories(result));
         }
     }
 
     String trashCategories(JSONArray categories) {
 
-        String[] recycle = {"bottle", "can", "drink"};
-        String[] compost = {"food"};
-        String[] landfill = {"", ""};
+        ArrayList<String> recycle = new ArrayList<String>(Arrays.asList("bottle", "can", "drink"));
+        ArrayList<String> compost = new ArrayList<String>(Arrays.asList("food"));
+        ArrayList<String> landfill = new ArrayList<String>();
 
         int recycleCount = 0;
         int compostCount = 0;
@@ -121,20 +126,22 @@ public class MainActivity extends AppCompatActivity {
         //put tag names in tagNames
         for (int i = 0; i < categories.length(); i++) {
             try {
-                tagNames.set(i,categories.getJSONObject(i).getString("NAME"));
+                System.out.println(categories.getJSONObject(i));
+                tagNames.add(categories.getJSONObject(i).getString("name"));
+                System.out.println(tagNames.get(i));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         for (int i = 0; i < tagNames.size(); i++) {
-            if (tagNames.contains(recycle[i])) {
+            if (recycle.contains(tagNames.get(i))) {
                 recycleCount++;
             }
-            if (tagNames.contains(compost[i])) {
+            if (compost.contains(tagNames.get(i))) {
                 compostCount++;
             }
-            if (tagNames.contains(landfill[i])) {
+            if (landfill.contains(tagNames.get(i))) {
                 landfillCount++;
             }
         }
