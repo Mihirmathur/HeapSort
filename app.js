@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var http = require('http');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -32,6 +32,13 @@ app.use(function(req, res, next) {
   next(err);
 });
 
+// app.get('/:bin?', function(req, res) {
+//  // console.log(req.params.data);
+//   var body = req.params.bin;
+//   console.log('Response From App==> ' + body);
+//   res.render('index', { title: 'HeapSort' });
+// });
+
 // error handlers
 
 // development error handler
@@ -55,6 +62,8 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+
 
 
 module.exports = app;
