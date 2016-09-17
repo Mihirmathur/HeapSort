@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.lang.reflect.Array;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView thumbnail;
@@ -24,12 +26,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
-        clickme = (Button) findViewById(R.id.clickme);  
+        clickme = (Button) findViewById(R.id.clickme);
 
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        clickme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -47,6 +48,47 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             thumbnail.setImageBitmap(imageBitmap);
         }
+    }
+
+    String trashCategories() {
+
+        String[] recycle = {"bottle", "can"};
+        String[] compost = {"food"};
+        String[] landfill = ["", ""];
+
+        int recycleCount = 0;
+        int compostCount = 0;
+        int landfillCount = 0;
+
+        String[] tagNames;
+        int[] tagScores =;
+
+        //put tag names in tagNames
+        for (int i = 0; i < tags[].Name.size(); i++) {
+            tagNames[i] = tags[i].Name;
+        }
+
+        //put tag scores in tagScores
+        for (int i = 0; i < tags[].Score.size(); i++) {
+            tagScores[i] = tags[i].Score;
+        }
+
+        for (int i = 0; i < tagNames.size(); i++) {
+            if (tagNames[i] == recycle[i]) {
+                recycleCount++;
+            } else if (tagNames[i] == compost[i]) {
+                compostCount++;
+            } else if (tagNames[i] == landfill[i]) {
+                landfillCount++;
+            }
+        }
+
+        if (recycleCount > compostCount && recycleCount > landfillCount) {
+            return "Please throw into the RECYCLE bin.";
+        } else if (compostCount > recycleCount && compostCount > landfillCount) {
+            return "Please throw into the COMPOST bin.";
+        } else
+            return "Please throw into the LANDFILL bin.";
     }
 
 }
