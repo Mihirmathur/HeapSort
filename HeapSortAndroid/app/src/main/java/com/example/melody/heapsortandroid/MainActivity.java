@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private JSONArray getAnalysisResult(Bitmap b) throws VisionServiceException, IOException, JSONException {
         Gson gson = new Gson();
-        String[] features = {"Categories"};
+        String[] features = {"Tags"};
         String[] details = {};
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -89,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
 
         AnalysisResult v =  this.client.analyzeImage(inputStream, features, details);
-        return (JSONArray) new JSONObject(gson.toJson(v)).get("categories");
+        System.out.println(gson.toJson(v));
+        return (JSONArray) new JSONObject(gson.toJson(v)).get("tags");
     }
 
     private class ComputerVision extends AsyncTask<Bitmap, Void, JSONArray> {
@@ -106,14 +107,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(JSONArray result) {
-            clickme.setText(result.toString());
-            results.setText(trashCategories(result));
+            if(result == null){
+                results.setText("An error occurred. Please try again");
+            } else {
+                clickme.setText(result.toString());
+                results.setText(trashCategories(result));
+            }
         }
     }
 
     String trashCategories(JSONArray categories) {
 
-        ArrayList<String> recycle = new ArrayList<String>(Arrays.asList("bottle", "can", "drink"));
+        ArrayList<String> recycle = new ArrayList<String>(Arrays.asList("bottle", "can", "drink", "container"));
         ArrayList<String> compost = new ArrayList<String>(Arrays.asList("food"));
         ArrayList<String> landfill = new ArrayList<String>();
 
