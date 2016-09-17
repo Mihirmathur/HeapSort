@@ -1,6 +1,9 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0 auto;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
 a {
@@ -8,7 +11,51 @@ a {
 }
 
 .container{
-	width: 100%;
-	height: 100%;
-	color: red;
+	height: 90vh;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.innermost_circ{
+	height: 220px;
+	width: 220px;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin:auto;
+	border-radius: 100%;
+    background: transparent;
+    border: 30px solid #F4E842;
+    z-index: 1;
+}
+
+.middle_circ{
+	height: 300px;
+	width: 300px;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin:auto;
+	border-radius: 100%;
+    background: transparent;
+    border: 20px solid #84DCC6;
+    z-index: 1;
+}
+
+.outer_circ{
+	height: 350px;
+	width: 350px;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin:auto;
+	border-radius: 100%;
+    background: transparent;
+    border: 10px solid #222222;
+    z-index: 1;
+}
+
+#my_camera{
+	display: none;
 }

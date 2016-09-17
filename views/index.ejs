@@ -1,13 +1,53 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <div class="container">
-    	<h1>Heap Sort</h1>
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+
+
+
+
+  <div class = "container">
+  <div class="outer_circ">
+  <div id="my_camera" style="width:500px; height:400px;"></div>
+  <div id="my_result"></div>
+    <div class="middle_circ">
+      <div class="innermost_circ">
+        <h1 id="cam_trigger">Heap Sort</h1>
+
+      </div>
     </div>
-  </body>
+  </div>
+  </div>
+
+  
+
+</body>
+
+<script src="/javascripts/webcam.min.js"></script> 
+
+<script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+<script src="/javascripts/jquery.easing.js"></script> 
+<script language="JavaScript">
+
+  $('#cam_trigger').on("click", function(){
+    $('.middle_circ').toggle(500, function(){
+      $('.outer_circ').animate({'height': '550px', 'width': '550px'}, 2000, "easeInOutCubic");
+    });
+    $('#my_camera').toggle(500, function(){
+      Webcam.attach( '#my_camera' );
+    });
+    
+    
+    
+  });
+
+  function take_snapshot() {
+    Webcam.snap( function(data_uri) {
+      document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+    } );
+  }
+</script> 
 </html>
