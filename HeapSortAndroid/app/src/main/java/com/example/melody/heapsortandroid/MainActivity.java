@@ -3,6 +3,8 @@ package com.example.melody.heapsortandroid;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -13,12 +15,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
+import com.microsoft.projectoxford.vision.VisionServiceClient;
+import com.microsoft.projectoxford.vision.VisionServiceRestClient;
+import com.microsoft.projectoxford.vision.contract.AnalysisResult;
+import com.microsoft.projectoxford.vision.rest.VisionServiceException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageView thumbnail;
     Button clickme;
+    private VisionServiceClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         clickme = (Button) findViewById(R.id.clickme);
 
         setSupportActionBar(toolbar);
+        if (client==null){
+            client = new VisionServiceRestClient(getString(R.string.subscription_key));
+        }
+
 
         clickme.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +65,41 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             thumbnail.setImageBitmap(imageBitmap);
             clickme.setText("");
+            new ComputerVision().execute(imageBitmap);
+        }
+    }
+
+    private String getAnalysisResult(Bitmap b) throws VisionServiceException, IOException {
+        Gson gson = new Gson();
+        String[] features = {"Categories"};
+        String[] details = {};
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.JPEG, 100, output);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
+
+        AnalysisResult v =  this.client.analyzeImage(inputStream, features, details);
+        return gson.toJson(v);
+    }
+
+    private class ComputerVision extends AsyncTask<Bitmap, Void, String> {
+
+        @Override
+        protected String doInBackground(Bitmap... params) {
+            try {
+                return getAnalysisResult(params[0]);
+            } catch (VisionServiceException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            clickme.setText(result);
         }
     }
 
