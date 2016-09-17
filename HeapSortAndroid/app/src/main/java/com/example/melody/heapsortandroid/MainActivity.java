@@ -128,11 +128,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < tagNames.size(); i++) {
-            if (tagNames.get(i).equals(recycle[i])) {
+            if (tagNames.contains(recycle[i])) {
                 recycleCount++;
-            } else if (tagNames.get(i).equals(compost[i])) {
+            }
+            if (tagNames.contains(compost[i])) {
                 compostCount++;
-            } else if (tagNames.get(i).equals(landfill[i])) {
+            }
+            if (tagNames.contains(landfill[i])) {
                 landfillCount++;
             }
         }
