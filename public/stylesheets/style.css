@@ -6,31 +6,40 @@ body {
   width: 100%;
 }
 
+a{
+	text-decoration: none;
+	color: #84DCC6;
+}
 
 .close-animatedModal{
 	padding-top: 40px;
 }
 
 .header{
-	padding: 20px 20px 20px 20px;
+	padding: 40px 80px 20px 40px;
 	font-size: 1em;
 	display: flex;
-    justify-content: right;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-end;
     text-decoration: none;
+    justify-content: flex-end;
     color: #222222;
 }
 
 .container{
-	height: 90vh;
+	height: 80vh;
 	display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.link{
+	padding: 0px 20px 0px 20px;
+}
+
 .innermost_circ{
 	font-family: 'Montserrat';
-	font-size: .9em;
+	font-size: .8em;
 	height: 220px;
 	width: 220px;
 	display: flex;
@@ -38,7 +47,7 @@ body {
     align-items: center;
 	margin:auto;
 	border-radius: 100%;
-    background: transparent;
+    background: white;
     border: 30px solid #F4E842;
     z-index: 1;
 }
@@ -51,7 +60,7 @@ body {
     align-items: center;
 	margin:auto;
 	border-radius: 100%;
-    background: transparent;
+    background: white;
     border: 20px solid #84DCC6;
     z-index: 1;
 }
@@ -64,7 +73,7 @@ body {
     align-items: center;
 	margin:auto;
 	border-radius: 100%;
-    background: transparent;
+    background: white;
     border: 10px solid #222222;
     z-index: 1;
 }
@@ -82,3 +91,17 @@ body {
 	position: absolute;
 	top: 70%;
 }
+
+#splash {
+  width: 100%;
+  min-height: 100%;
+  position: relative;
+  overflow: hidden; }
+
+ canvas{
+
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: -1;
+ }

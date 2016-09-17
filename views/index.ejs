@@ -1,41 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title><%= title %></title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" rel="stylesheet">
+
+  <script type="text/javascript" src="javascripts/paper-full.min.js"></script>
+  <script type = "text/paperscript" canvas = "canvas-1" src="/javascripts/splash.js"></script>
+
+
 </head>
 <body>
 
-<div class="header">
-  <a id="analytics" href="#animatedModal">Analytics</a>
-</div>
+  <div class="canvas">
 
-  <div class = "container">
-    <div class="outer_circ">
-      <div id="my_camera" style="width:500px; height:400px;"></div>
-      <div id="my_result"></div>
-      <h1 id="cam_clicker" onclick="take_snapshot()">CLICK</h1>
-      <div class="middle_circ">
-        <div class="innermost_circ">
-        <h1 id="cam_trigger">HEAP SORT</h1>
+    <canvas id="canvas-1" resize hidpi="off"></canvas>
+
+
+    <div class="header">
+      <a class="link" id="analytics" href="#animatedModal">Analytics</a>
+      <a class="link" id="analytics2" href="#modal2">Analytics2</a>
+
+    </div>
+
+    <div class = "container">
+      <div class="outer_circ">
+        <div id="my_camera" style="width:500px; height:400px;"></div>
+        <div id="my_result"></div>
+        <h1 id="cam_clicker" onclick="take_snapshot()">CLICK</h1>
+        <div class="middle_circ">
+          <div class="innermost_circ">
+            <h1 id="cam_trigger">HEAP SORT</h1>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-
   <div id="animatedModal">
-        <!--THIS IS IMPORTANT! to close the modal, the class name has to match the name given on the ID  class="close-animatedModal" -->
-        <div class="close-animatedModal"> 
-            <center><img class="closebt" src="/images/closebt.svg"></center>
-        </div>
-            
-        <div class="modal-content">
-                  <!--Your modal content goes here-->
-        </div>
+    <!--THIS IS IMPORTANT! to close the modal, the class name has to match the name given on the ID  class="close-animatedModal" -->
+    <div class="close-animatedModal"> 
+      <center><img class="closebt" src="/images/closebt.svg"></center>
     </div>
+
+    <div class="modal-content">
+      <!--Your modal content goes here-->
+    </div>
+  </div>
+
+ 
+
+
+
   
 
 </body>
@@ -44,36 +63,10 @@
 
 <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
 <script src="/javascripts/jquery.easing.js"></script> 
+
 <script src="/javascripts/animatedModal.min.js"></script> 
-<script language="JavaScript">
 
-Webcam.set({
-        width: 400,
-        height: 300,
-        dest_width: 400,
-        dest_height: 300,
-        image_format: 'jpeg',
-        jpeg_quality: 90,
-        force_flash: false,
-        flip_horiz: true,
-        fps: 45
-    });
-
-  $('#cam_trigger').on("click", function(){
-    $('.middle_circ').toggle(500,"easeInOutCubic", function(){
-
-      $('.outer_circ').animate({'height': '550px', 'width': '550px'}, 2000, "easeInOutCubic");
-      $('#my_camera').toggle(500, function(){
-        Webcam.attach( '#my_camera', function(){
-
-        });
-        $('#cam_clicker').toggle(500);
-      });
-      
-    });
-    
-    
-  });
+<script>
 
   function take_snapshot() {
     Webcam.snap( function(data_uri) {
@@ -86,7 +79,42 @@ Webcam.set({
     } );
   }
 
-   $("#analytics").animatedModal();
+  $(document).ready(function(){
+    $("#analytics").animatedModal();
+    $("#analytics2").animatedModal();
+
+    Webcam.set({
+      width: 400,
+      height: 300,
+      dest_width: 400,
+      dest_height: 300,
+      image_format: 'jpeg',
+      jpeg_quality: 90,
+      force_flash: false,
+      flip_horiz: true,
+      fps: 45
+    });
+
+    $('#cam_trigger').on("click", function(){
+      $('.middle_circ').toggle(500,"easeInOutCubic", function(){
+
+        $('.outer_circ').animate({'height': '550px', 'width': '550px'}, 2000, "easeInOutCubic");
+        $('#my_camera').toggle(500, function(){
+          Webcam.attach( '#my_camera', function(){
+
+          });
+          $('#cam_clicker').toggle(500);
+        });
+
+      });
+
+
+    });
+
+
+
+  });
+
 
 </script> 
 </html>
