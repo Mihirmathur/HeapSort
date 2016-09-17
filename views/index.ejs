@@ -8,8 +8,9 @@
 </head>
 <body>
 
-
-
+<div class="header">
+  <a id="analytics" href="#animatedModal">Analytics</a>
+</div>
 
   <div class = "container">
     <div class="outer_circ">
@@ -19,12 +20,22 @@
       <div class="middle_circ">
         <div class="innermost_circ">
         <h1 id="cam_trigger">HEAP SORT</h1>
-
         </div>
       </div>
     </div>
   </div>
 
+
+  <div id="animatedModal">
+        <!--THIS IS IMPORTANT! to close the modal, the class name has to match the name given on the ID  class="close-animatedModal" -->
+        <div class="close-animatedModal"> 
+            <center><img class="closebt" src="/images/closebt.svg"></center>
+        </div>
+            
+        <div class="modal-content">
+                  <!--Your modal content goes here-->
+        </div>
+    </div>
   
 
 </body>
@@ -33,6 +44,7 @@
 
 <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
 <script src="/javascripts/jquery.easing.js"></script> 
+<script src="/javascripts/animatedModal.min.js"></script> 
 <script language="JavaScript">
 
 Webcam.set({
@@ -61,8 +73,6 @@ Webcam.set({
     });
     
     
-    
-    
   });
 
   function take_snapshot() {
@@ -75,5 +85,8 @@ Webcam.set({
       
     } );
   }
+
+   $("#analytics").animatedModal();
+
 </script> 
 </html>

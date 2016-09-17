@@ -1,14 +1,24 @@
 body {
  	font-family: 'Open Sans';
- 	font-size: .7em;
   margin: 0 auto;
   padding: 0;
   height: 100%;
   width: 100%;
 }
 
-a {
-  color: #00B7FF;
+
+.close-animatedModal{
+	padding-top: 40px;
+}
+
+.header{
+	padding: 20px 20px 20px 20px;
+	font-size: 1em;
+	display: flex;
+    justify-content: right;
+    align-items: center;
+    text-decoration: none;
+    color: #222222;
 }
 
 .container{
