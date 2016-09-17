@@ -1,6 +1,7 @@
 package com.example.melody.heapsortandroid;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(takePictureIntent, 1);
                 }
             }
+
+            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+                if (requestCode == 1 && resultCode == RESULT_OK) {
+                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                }
+            }
+
+            
         });
     }
 
