@@ -1,6 +1,7 @@
 // Code ported to Paper.js from http://the389.com/9/1/
 // with permission.
-
+var FillColor;
+temp = 0;
 var values = {
     friction: 0.8,
     timeStep: 0.01,
@@ -36,7 +37,7 @@ Spring.prototype.update = function() {
 
 function createPath(strength) {
     var path = new Path({
-        fillColor: '#00A2E2'
+        fillColor: '#00A2E2' || FillColor
     });
     springs = [];
     for (var i = 0; i <= values.amount; i++) {
@@ -85,6 +86,9 @@ function onMouseMove(event) {
 
 function onFrame(event) {
     updateWave(path);
+    if(temp==1){
+       path.fillColor = "#84DCC6";
+    }
 }
 
 function updateWave(path) {
@@ -102,9 +106,9 @@ function updateWave(path) {
     path.smooth({ type: 'continuous' });
 }
 
-function onKeyDown(event) {
-    if (event.key == 'space') {
-        path.fullySelected = !path.fullySelected;
-        path.fillColor = path.fullySelected ? null : 'black';
-    }
-}
+// function onKeyDown(event) {
+//     if (event.key == 'space') {
+//         path.fullySelected = !path.fullySelected;
+//         path.fillColor = path.fullySelected ? null : 'black';
+//     }
+// }
