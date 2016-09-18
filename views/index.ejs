@@ -51,7 +51,7 @@
     </div>
   </div>
 
- 
+
 
 
 
@@ -62,6 +62,9 @@
 <script src="/javascripts/webcam.min.js"></script> 
 
 <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+
+<script type="text/javascript"
+src="https://api.filestackapi.com/filestack.js"></script>
 <script src="/javascripts/jquery.easing.js"></script> 
 
 <script src="/javascripts/animatedModal.min.js"></script> 
@@ -73,7 +76,49 @@
       $('#my_camera').toggle(500);
       $('#cam_clicker').toggle(500, function(){
         document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+        console.log(data_uri);
         $('#my_result').toggle(500);
+        //window.location.href = '/'+'\''+data_uri.toString()+'\'';
+
+        
+
+        $.ajax({
+          method: "POST",
+          url:"/image",
+          data:data_uri,
+          dataType: "text"
+        }).done(function(res){
+            console.log(res);
+            setTimeout(function(){
+             $('#my_result').toggle(500); 
+             $('#cam_trigger').html("Compost!");
+             $('#middle_circ').toggle(500);
+            }, 2000)
+        })
+        .fail(function(res){
+          console.log(res);
+          
+            setTimeout(function(){
+              temp = 1;
+          FillColor = "#84DCC6";
+              paper.project.view.update();
+             $('#my_result').toggle(500); 
+             $('#cam_trigger').html("Compost!");
+             $('.middle_circ').toggle(500);
+            }, 2000)
+        })
+
+
+        // filepicker.setKey("A5svCF4nfRZaTN39PpcE3z");
+        
+
+        // filepicker.store(
+        //   data,
+        //   {filename: 'HeapSort3.jpeg', mimetype: 'image/jpeg', base64decode: true},
+        //   function(new_blob){
+        //     console.log(JSON.stringify(new_blob));
+        //   }
+        //   );
       });
       
     } );
