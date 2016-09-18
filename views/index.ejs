@@ -27,6 +27,7 @@
     </div>
 
     <div class = "container">
+    <p class="keywords"></p>
       <div class="outer_circ">
         <div id="my_camera" style="width:500px; height:400px;"></div>
         <div id="my_result"></div>
@@ -93,7 +94,20 @@
           data:{body: data_uri},
           dataType: "text"
         }).done(function(res){
-          console.log(res);
+          response = JSON.parse(res);
+          console.log(response);
+          $('.keywords').empty();     
+
+            (function myLoop (i) {          
+                setTimeout(function () {   
+                $('.keywords').append("<span class='animated rotateIn'>"+"&nbsp"+response[i]+"&nbsp"+"</span>");         //  your code here                
+                if (--i) myLoop(i);      //  decrement i and call myLoop again if i > 0
+                }, 200)
+            })(10);
+
+
+            
+          
           setTimeout(function(){
            temp = 1;
            FillColor = "#84DCC6";

@@ -4,9 +4,9 @@ var base64Img = require('base64-img');
 var fs = require("fs");
 var firebase = require("firebase");
 var config = {
-  apiKey: "9o5B3crPY6sDuqbDRggbyFA695MK6m2cHiZ4vTDE",
-  authDomain: "heapsort-9a89b.firebaseapp.com",
-  databaseURL: "https://heapsort-9a89b.firebaseio.com/",
+	apiKey: "9o5B3crPY6sDuqbDRggbyFA695MK6m2cHiZ4vTDE",
+	authDomain: "heapsort-9a89b.firebaseapp.com",
+	databaseURL: "https://heapsort-9a89b.firebaseio.com/",
 };
 firebase.initializeApp(config);
 
@@ -29,14 +29,15 @@ Clarifai.initialize({
 
 /* GET home page. */
 router.get('/', function(req, res) {
-var composition = {}
-var history = firebase.database().ref('history/')
-.once('value').then( function(snapshot) {
-  var allItems = snapshot.val();
+	var composition = {};
+	var wordCloud = {"name": "garbage"};
+	var history = firebase.database().ref('history/')
+	.once('value').then( function(snapshot) {
+		var allItems = snapshot.val();
 
-  var compostCount = 0;
-  var recycleCount = 0;
-  var landfillCount = 0;
+		var compostCount = 0;
+		var recycleCount = 0;
+		var landfillCount = 0;
 
   //console.log(allItems);
   for(val in allItems){
@@ -49,12 +50,12 @@ var history = firebase.database().ref('history/')
   console.log("Landfill: "+ landfillCount);
   console.log("Compost: "+ compostCount);
   console.log("Recycle: "+ recycleCount);
-   composition = [{
-   	x:["Landfill", "Compost", "Recycle"],
-   	y:[landfillCount, compostCount, recycleCount],
-   	type: 'bar'
-   }]
-res.render('index', { title: 'HeapSort', comp: composition  });
+  composition = [{
+  	x:["Landfill", "Compost", "Recycle"],
+  	y:[landfillCount, compostCount, recycleCount],
+  	type: 'bar'
+  }]
+  res.render('index', { title: 'HeapSort', comp: composition  });
 });
 
 	
@@ -72,26 +73,22 @@ function getTags(){
 
 router.post('/image', function(req, res){
 	var obj = req.body.body.slice(22);
-	//console.log(obj);
-
-
-			// fs.writeFile("hi.jpg", new Buffer(obj, "base64"), function(err) {
-			// 	console.log(filepath+"====>");
-			// //getTags();
-			// res.render('index', { title: 'Heap' });
-			// });
+	var tags;
 
 			Clarifai.getTagsByImageBytes(obj).then((response) => {
-				var tags = response.results[0]["result"].tag.classes;
-		console.log('Got response', tags);
+				tags = response.results[0]["result"].tag.classes;
+				console.log('Got response', tags);
+				tags = JSON.stringify(tags);
+				res.end(tags);
 
-	}).catch((err) => {
-		console.error('Encountered error making request:', err);
-	});
+			}).catch((err) => {
+				console.error('Encountered error making request:', err);
+				tags = JSON.stringify(tags);
+				res.end(tags);
+			});
 
 
 
-		
 	// });
 
 	// obj = obj.slice(0, -2);

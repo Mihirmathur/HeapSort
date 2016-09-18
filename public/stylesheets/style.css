@@ -11,6 +11,8 @@ a{
 	color: #84DCC6;
 }
 
+
+
 .close-animatedModal{
 	padding-top: 40px;
 }
@@ -76,6 +78,18 @@ a{
     background: white;
     border: 10px solid #222222;
     z-index: 1;
+}
+
+.keywords{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	position: absolute;
+	flex-direction: row;
+	top: 3%;
+	font-size: .8em;
+	width: 40%;
+	color: #84DCC6;
 }
 
 #my_camera{
