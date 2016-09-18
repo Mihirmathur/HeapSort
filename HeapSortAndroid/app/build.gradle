@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.microsoft.projectoxford:vision:1.0.354'
     compile 'com.firebase:firebase-client-android:2.5.2+'
+    compile 'com.clarifai:clarifai-api-java:1.2.0'
 }

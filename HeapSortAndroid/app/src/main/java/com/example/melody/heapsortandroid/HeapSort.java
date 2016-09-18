@@ -1,5 +1,6 @@
 package com.example.melody.heapsortandroid;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
@@ -10,6 +11,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,6 +19,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.clarifai.api.ClarifaiClient;
+import com.clarifai.api.RecognitionRequest;
+import com.clarifai.api.RecognitionResult;
+import com.clarifai.api.Tag;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -40,15 +46,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class HeapSort extends AppCompatActivity {
 
     ImageView thumbnail;
     Button clickme;
     TextView results;
+    TextView tags;
     private VisionServiceClient client;
     Firebase firebase;
-
+    AlertDialog.Builder confirm;
+    private ClarifaiClient clarifai;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +66,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
         clickme = (Button) findViewById(R.id.clickme);
+        tags = (TextView) findViewById(R.id.tags);
         results = (TextView) findViewById(R.id.results);
         Firebase.setAndroidContext(this);
         firebase = new Firebase("https://heapsort-9a89b.firebaseio.com/");
+        confirm = new AlertDialog.Builder(this);
 
         setSupportActionBar(toolbar);
         if (client==null){
             client = new VisionServiceRestClient(getString(R.string.subscription_key));
         }
-
+        clarifai = new ClarifaiClient(getString(R.string.client_id), getString(R.string.client_secret));
 
         clickme.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private JSONArray getAnalysisResult(Bitmap b) throws VisionServiceException, IOException, JSONException {
+    private ArrayList<String> getAnalysisResult(Bitmap b) throws VisionServiceException, IOException, JSONException {
         Gson gson = new Gson();
         String[] features = {"Tags"};
         String[] details = {};
@@ -100,14 +111,33 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
 
         AnalysisResult v =  this.client.analyzeImage(inputStream, features, details);
-        System.out.println(gson.toJson(v));
-        return (JSONArray) new JSONObject(gson.toJson(v)).get("tags");
+        List<RecognitionResult> cResults = clarifai.recognize(new RecognitionRequest(output.toByteArray()));
+
+        ArrayList<String> tagNames = new ArrayList<String>();
+        JSONArray microsoft = (JSONArray) new JSONObject(gson.toJson(v)).get("tags");
+
+        //put tag names in tagNames
+        for (int i = 0; i < microsoft.length(); i++) {
+            try {
+                System.out.println(microsoft.getJSONObject(i));
+                tagNames.add(microsoft.getJSONObject(i).getString("name"));
+                System.out.println(tagNames.get(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Tag t: cResults.get(0).getTags()){
+            tagNames.add(t.getName());
+        }
+
+        return tagNames;
     }
 
-    private class ComputerVision extends AsyncTask<Bitmap, Void, JSONArray> {
+    private class ComputerVision extends AsyncTask<Bitmap, Void, ArrayList<String>> {
 
         @Override
-        protected JSONArray doInBackground(Bitmap... params) {
+        protected ArrayList<String> doInBackground(Bitmap... params) {
             try {
                 return getAnalysisResult(params[0]);
             } catch (Exception e) {
@@ -117,30 +147,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONArray result) {
+        protected void onPostExecute(ArrayList<String> result) {
             if(result == null){
                 results.setText("An error occurred. Please try again");
             } else {
-                clickme.setText(result.toString());
                 trashCategories(result);
             }
         }
     }
 
-    void trashCategories(final JSONArray categories) {
-
-        final ArrayList<String> tagNames = new ArrayList<String>();
-
-        //put tag names in tagNames
-        for (int i = 0; i < categories.length(); i++) {
-            try {
-                System.out.println(categories.getJSONObject(i));
-                tagNames.add(categories.getJSONObject(i).getString("name"));
-                System.out.println(tagNames.get(i));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+    void trashCategories(final ArrayList<String> tagNames) {
 
         firebase.child("categories").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -169,11 +185,30 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                //TODO add confirm button for adding to Firebase
+                final String finalMaxCategory = maxCategory;
 
-                Firebase timestamp = firebase.child("history").push();
-                timestamp.child("tags").setValue(tagNames);
-                timestamp.child("category").setValue(maxCategory);
+                confirm.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which ){
+                        Firebase timestamp = firebase.child("history").push();
+                        timestamp.child("tags").setValue(tagNames);
+                        timestamp.child("category").setValue(finalMaxCategory);
+                    }
+                });
+                confirm.setNegativeButton("NO", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+
+                    }
+                });
+                confirm.setMessage("Send results to Firebase?");
+                confirm.create().show();
+
+                String tagsToPrint ="";
+                for(String i: tagNames){
+                    tagsToPrint += i + " ";
+                }
+                tags.setText(tagsToPrint);
                 results.setText("Please place your item in " + maxCategory);
 
             }
