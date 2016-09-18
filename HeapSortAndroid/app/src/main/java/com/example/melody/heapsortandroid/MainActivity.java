@@ -6,6 +6,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.microsoft.projectoxford.vision.VisionServiceClient;
 import com.microsoft.projectoxford.vision.VisionServiceRestClient;
@@ -33,6 +38,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     Button clickme;
     TextView results;
     private VisionServiceClient client;
+    Firebase firebase;
 
 
     @Override
@@ -50,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         thumbnail = (ImageView) findViewById(R.id.thumbnail);
         clickme = (Button) findViewById(R.id.clickme);
         results = (TextView) findViewById(R.id.results);
+        Firebase.setAndroidContext(this);
+        firebase = new Firebase("https://heapsort-9a89b.firebaseio.com/");
 
         setSupportActionBar(toolbar);
         if (client==null){
@@ -76,12 +86,13 @@ public class MainActivity extends AppCompatActivity {
             thumbnail.setImageBitmap(imageBitmap);
             clickme.setText("");
             new ComputerVision().execute(imageBitmap);
+            //TODO: Use Claifai API too
         }
     }
 
     private JSONArray getAnalysisResult(Bitmap b) throws VisionServiceException, IOException, JSONException {
         Gson gson = new Gson();
-        String[] features = {"Categories"};
+        String[] features = {"Tags"};
         String[] details = {};
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -89,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
 
         AnalysisResult v =  this.client.analyzeImage(inputStream, features, details);
-        return (JSONArray) new JSONObject(gson.toJson(v)).get("categories");
+        System.out.println(gson.toJson(v));
+        return (JSONArray) new JSONObject(gson.toJson(v)).get("tags");
     }
 
     private class ComputerVision extends AsyncTask<Bitmap, Void, JSONArray> {
@@ -106,22 +118,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(JSONArray result) {
-            clickme.setText(result.toString());
-            results.setText(trashCategories(result));
+            if(result == null){
+                results.setText("An error occurred. Please try again");
+            } else {
+                clickme.setText(result.toString());
+                trashCategories(result);
+            }
         }
     }
 
-    String trashCategories(JSONArray categories) {
+    void trashCategories(final JSONArray categories) {
 
-        ArrayList<String> recycle = new ArrayList<String>(Arrays.asList("bottle", "can", "drink"));
-        ArrayList<String> compost = new ArrayList<String>(Arrays.asList("food"));
-        ArrayList<String> landfill = new ArrayList<String>();
-
-        int recycleCount = 0;
-        int compostCount = 0;
-        int landfillCount = 0;
-
-        ArrayList<String> tagNames = new ArrayList<String>();
+        final ArrayList<String> tagNames = new ArrayList<String>();
 
         //put tag names in tagNames
         for (int i = 0; i < categories.length(); i++) {
@@ -134,24 +142,47 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        for (int i = 0; i < tagNames.size(); i++) {
-            if (recycle.contains(tagNames.get(i))) {
-                recycleCount++;
-            }
-            if (compost.contains(tagNames.get(i))) {
-                compostCount++;
-            }
-            if (landfill.contains(tagNames.get(i))) {
-                landfillCount++;
-            }
-        }
+        firebase.child("categories").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String, Integer> counters = new HashMap<String, Integer>();
+                for(DataSnapshot d: dataSnapshot.getChildren()){
+                    System.out.println(d.toString());
+                    int counter = 0;
+                    for(String s: tagNames){
+                        for(DataSnapshot childS: d.getChildren()){
+                            if(s.equalsIgnoreCase((String) childS.getValue())){
+                                    counter++;
+                            }
+                        }
+                    }
 
-        if (recycleCount > compostCount && recycleCount > landfillCount) {
-            return "Please throw into the RECYCLE bin.";
-        } else if (compostCount > recycleCount && compostCount > landfillCount) {
-            return "Please throw into the COMPOST bin.";
-        } else
-            return "Please throw into the LANDFILL bin.";
+                    counters.put(d.getKey(), counter);
+                }
+
+                String maxCategory = (String) dataSnapshot.child("default").getValue();
+                int maxCount = 0;
+
+                for(String key: counters.keySet()){
+                    if(counters.get(key) > maxCount){
+                        maxCategory = key;
+                    }
+                }
+
+                //TODO add confirm button for adding to Firebase
+
+                Firebase timestamp = firebase.child("history").push();
+                timestamp.child("tags").setValue(tagNames);
+                timestamp.child("category").setValue(maxCategory);
+                results.setText("Please place your item in " + maxCategory);
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
 }
