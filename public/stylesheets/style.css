@@ -90,6 +90,13 @@ a{
 	display: none;
 	position: absolute;
 	top: 70%;
+	cursor: pointer;
+	z-index: 3;
+}
+
+#cam_trigger{
+	cursor: pointer;
+	z-index: 3;
 }
 
 #splash {
@@ -99,9 +106,20 @@ a{
   overflow: hidden; }
 
  canvas{
-
     height: 100%;
     width: 100%;
     position: absolute;
     z-index: -1;
+ }
+
+ .chart{
+ 	width: 30%;
+ 	padding: 50px 20px 50px 20px;
+ }
+
+ .modal-content{
+ 	display: flex;
+ 	flex-direction: row;
+    justify-content: center;
+    align-items: center;
  }

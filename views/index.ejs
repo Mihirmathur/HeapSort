@@ -31,9 +31,9 @@
         <div id="my_camera" style="width:500px; height:400px;"></div>
         <div id="my_result"></div>
         <h1 id="cam_clicker" onclick="take_snapshot()">CLICK</h1>
-        <div class="middle_circ">
+        <div class="middle_circ animated bounceIn">
           <div class="innermost_circ">
-            <h1 id="cam_trigger">HEAP SORT</h1>
+            <h1 id="cam_trigger" class="animated pulse infinite">HEAP SORT</h1>
           </div>
         </div>
       </div>
@@ -47,7 +47,12 @@
     </div>
 
     <div class="modal-content">
-      <!--Your modal content goes here-->
+      <div class="chart" id="bar_chart">
+
+      </div>
+      <div class="chart" id="word_cloud">
+
+      </div>
     </div>
   </div>
 
@@ -63,12 +68,12 @@
 
 <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
 
-<script type="text/javascript"
-src="https://api.filestackapi.com/filestack.js"></script>
+<script type="text/javascript" src="https://api.filestackapi.com/filestack.js"></script>
 <script src="/javascripts/jquery.easing.js"></script> 
-
+<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
 <script src="/javascripts/animatedModal.min.js"></script> 
-
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 
   function take_snapshot() {
@@ -85,27 +90,30 @@ src="https://api.filestackapi.com/filestack.js"></script>
         $.ajax({
           method: "POST",
           url:"/image",
-          data:data_uri,
+          data:{body: data_uri},
           dataType: "text"
         }).done(function(res){
-            console.log(res);
-            setTimeout(function(){
-             $('#my_result').toggle(500); 
-             $('#cam_trigger').html("Compost!");
-             $('#middle_circ').toggle(500);
-            }, 2000)
+          console.log(res);
+          setTimeout(function(){
+           temp = 1;
+           FillColor = "#84DCC6";
+           paper.project.view.update();
+           $('#my_result').toggle(500); 
+           $('#cam_trigger').html("Recycle!");
+           $('.middle_circ').toggle(500);
+         }, 2000)
         })
         .fail(function(res){
           console.log(res);
-          
-            setTimeout(function(){
-              temp = 1;
-          FillColor = "#84DCC6";
-              paper.project.view.update();
-             $('#my_result').toggle(500); 
-             $('#cam_trigger').html("Compost!");
-             $('.middle_circ').toggle(500);
-            }, 2000)
+
+          setTimeout(function(){
+            temp = 1;
+            FillColor = "#84DCC6";
+            paper.project.view.update();
+            $('#my_result').toggle(500); 
+            $('#cam_trigger').html("Recycle!");
+            $('.middle_circ').toggle(500);
+          }, 2000)
         })
 
 
@@ -125,8 +133,15 @@ src="https://api.filestackapi.com/filestack.js"></script>
   }
 
   $(document).ready(function(){
+    var composition = <%- JSON.stringify(comp) %>;
     $("#analytics").animatedModal();
     $("#analytics2").animatedModal();
+
+    var data = composition;
+    var layout = {
+    title: 'Waste Items Today'
+  };
+    Plotly.newPlot('bar_chart', data, layout);
 
     Webcam.set({
       width: 400,
