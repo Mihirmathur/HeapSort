@@ -97,7 +97,6 @@ public class HeapSort extends AppCompatActivity {
             thumbnail.setImageBitmap(imageBitmap);
             clickme.setText("");
             new ComputerVision().execute(imageBitmap);
-            //TODO: Use Claifai API too
         }
     }
 
@@ -210,6 +209,15 @@ public class HeapSort extends AppCompatActivity {
                 }
                 tags.setText(tagsToPrint);
                 results.setText("Please place your item in " + maxCategory);
+                if (maxCategory.equals("recycle")){
+                    clickme.setBackgroundResource(R.drawable.click_button_recycle);
+                }
+                if (maxCategory.equals("landfill")){
+                    clickme.setBackgroundResource(R.drawable.click_button_landfill);
+                }
+                if (maxCategory.equals("compost")) {
+                    clickme.setBackgroundResource(R.drawable.click_button_compost);
+                }
 
             }
 

@@ -43,7 +43,7 @@
             android:id="@+id/thumbnail"
             android:layout_width="650px"
             android:layout_height="650px"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/tags"
@@ -61,7 +61,7 @@
             android:layout_gravity="bottom"
             android:textAlignment="center"
             android:fontFamily="Montserrat"
-            android:textSize="12pt"
+            android:textSize="10pt"
             android:textStyle="bold"/>
 
     </FrameLayout>
