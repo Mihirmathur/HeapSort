@@ -30,7 +30,7 @@ Clarifai.initialize({
 /* GET home page. */
 router.get('/', function(req, res) {
 	var composition = {};
-	var wordCloud = {"name": "garbage"};
+	var wordCloud = {};
 	var history = firebase.database().ref('history/')
 	.once('value').then( function(snapshot) {
 		var allItems = snapshot.val();
@@ -42,11 +42,26 @@ router.get('/', function(req, res) {
   //console.log(allItems);
   for(val in allItems){
   	//console.log(allItems[val]);
+  	for(tag in allItems[val].tags){
+  		var word = allItems[val].tags[tag];
+  		console.log(word);
+  		if(word!="indoor"){
+  			if(wordCloud[word]===undefined){
+  				wordCloud[word] = 1;
+  			}
+  			else {
+  				wordCloud[word]++;	
+  			}
+  		}
+  	}
+
+
+
   	if(allItems[val].category == "landfill")landfillCount++;
   	if(allItems[val].category == "compost")compostCount++;
   	if(allItems[val].category == "recycle")recycleCount++;
   }
-
+  console.log(wordCloud);
   console.log("Landfill: "+ landfillCount);
   console.log("Compost: "+ compostCount);
   console.log("Recycle: "+ recycleCount);
@@ -55,7 +70,7 @@ router.get('/', function(req, res) {
   	y:[landfillCount, compostCount, recycleCount],
   	type: 'bar'
   }]
-  res.render('index', { title: 'HeapSort', comp: composition  });
+  res.render('index', { title: 'HeapSort', comp: composition, cloud: wordCloud  });
 });
 
 	
