@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "667770956735",
+    "firebase_url": "https://heapsort-45e19.firebaseio.com",
+    "project_id": "heapsort-45e19",
+    "storage_bucket": "heapsort-45e19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667770956735:android:95d19ec6d2d696eb",
+        "android_client_info": {
+          "package_name": "com.example.melody.heapsortandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667770956735-cgh1s64hu01tp076j340vcs8fbitdv2i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-s-EQ3sP0ac1NpPCQu54GyJRTxGoduio"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
