@@ -27,7 +27,7 @@
     </div>
 
     <div class = "container">
-    <p class="keywords"></p>
+      <p class="keywords"></p>
       <div class="outer_circ">
         <div id="my_camera" style="width:500px; height:400px;"></div>
         <div id="my_result"></div>
@@ -77,6 +77,10 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 
+  var compost = ["food", "eaten", "paper"];
+  var recycle = ["drink", "can", "bottle", "container", "plastic", "eyewear", "table", "chair"];
+
+
   function take_snapshot() {
     Webcam.snap( function(data_uri) {
       $('#my_camera').toggle(500);
@@ -98,34 +102,60 @@
           console.log(response);
           $('.keywords').empty();     
 
-            (function myLoop (i) {          
-                setTimeout(function () {   
+          (function myLoop (i) {          
+            setTimeout(function () {   
                 $('.keywords').append("<span class='animated rotateIn'>"+"&nbsp"+response[i]+"&nbsp"+"</span>");         //  your code here                
                 if (--i) myLoop(i);      //  decrement i and call myLoop again if i > 0
-                }, 200)
-            })(10);
+              }, 200)
+          })(10);
 
+          for(var j in response){
+            if(compost.indexOf(response[j])>-1){
+              setTimeout(function(){
+               temp = 2;
+               FillColor = "#F4E842";
+               paper.project.view.update();
+               $('#my_result').toggle(500); 
+               $('#cam_trigger').html("Compost!");
+               $('.middle_circ').toggle(500);
+             }, 2000)
+              console.log("Compost!!")
+              return;
+            }
 
-            
+            else if(recycle.indexOf(response[j])>-1){
+              setTimeout(function(){
+               temp = 1;
+               FillColor = "#84DCC6";
+               paper.project.view.update();
+               $('#my_result').toggle(500); 
+               $('#cam_trigger').html("Recycle!");
+               $('.middle_circ').toggle(500);
+             }, 2000)
+              console.log("Recycle!!")
+              return;
+            }
+          }
+
           
-          setTimeout(function(){
-           temp = 1;
-           FillColor = "#84DCC6";
-           paper.project.view.update();
-           $('#my_result').toggle(500); 
-           $('#cam_trigger').html("Recycle!");
-           $('.middle_circ').toggle(500);
-         }, 2000)
+         setTimeout(function(){
+            temp = 3;
+            
+            paper.project.view.update();
+            $('#my_result').toggle(500); 
+            $('#cam_trigger').html("Landfill!");
+            $('.middle_circ').toggle(500);
+          }, 2000)
         })
         .fail(function(res){
           console.log(res);
 
           setTimeout(function(){
-            temp = 1;
+            temp = 3;
             FillColor = "#84DCC6";
             paper.project.view.update();
             $('#my_result').toggle(500); 
-            $('#cam_trigger').html("Recycle!");
+            $('#cam_trigger').html("Landfill!");
             $('.middle_circ').toggle(500);
           }, 2000)
         })
@@ -154,8 +184,8 @@
 
     var data = composition;
     var layout = {
-    title: 'Waste Items Today'
-  };
+      title: 'Waste Items Today'
+    };
     Plotly.newPlot('bar_chart', data, layout);
 
     Webcam.set({
