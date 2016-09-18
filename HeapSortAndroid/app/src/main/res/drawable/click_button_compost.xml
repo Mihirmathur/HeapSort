@@ -7,7 +7,7 @@
             android:innerRadius="140dp"
             android:thickness="20dp"
             android:useLevel="false">
-            <solid android:color="#84DCC6" />
+            <solid android:color="#F4E842" />
         </shape>
     </item>
     <item>
@@ -16,7 +16,7 @@
             android:innerRadius="165dp"
             android:thickness="10dp"
             android:useLevel="false">
-            <solid android:color="#000" />
+            <solid android:color="#F4E842" />
         </shape>
     </item>
     <item>
