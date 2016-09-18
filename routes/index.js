@@ -3,6 +3,8 @@ var router = express.Router();
 var base64Img = require('base64-img');
 var fs = require("fs");
 var firebase = require("firebase");
+
+var json2csv = require('json2csv');
 var config = {
 	apiKey: "9o5B3crPY6sDuqbDRggbyFA695MK6m2cHiZ4vTDE",
 	authDomain: "heapsort-9a89b.firebaseapp.com",
@@ -26,6 +28,24 @@ Clarifai.initialize({
 // const parameters = {
 //     visualFeatures: "Categories"
 // };
+
+function ConvertToCSV(objArray) {
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = '';
+
+    for (var i = 0; i < array.length; i++) {
+      var line = '';
+      for (var index in array[i]) {
+        if (line != '') line += ','
+
+          line += array[i][index];
+      }
+
+      str += line + '\r\n';
+    }
+
+    return str;
+  }
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -70,6 +90,30 @@ router.get('/', function(req, res) {
   	y:[landfillCount, compostCount, recycleCount],
   	type: 'bar'
   }]
+  // var wordCloudCSV = json2csv(wordCloud);
+  // console.log(wordCloudCSV);
+
+  var cloudCSV = ["Tag:Amount"];
+  for(val in wordCloud){
+  	cloudCSV.push((val + ":" + wordCloud[val]).toString());
+  	
+  }
+
+  cloudCSV= cloudCSV.join(',');
+  cloudCSV = cloudCSV.replace(/,/g, '\n');
+  cloudCSV = cloudCSV.replace(/:/g, ',');
+  // console.log(cloudCSV);
+  //cloudCSV = ConvertToCSV(wordCloud);
+  console.log(cloudCSV);
+
+  fs.writeFile("public/test.csv", cloudCSV, function(err) {
+  	if(err) {
+  		return console.log(err);
+  	}
+
+  	console.log("The file was saved!");
+  }); 
+
   res.render('index', { title: 'HeapSort', comp: composition, cloud: wordCloud  });
 });
 
@@ -90,17 +134,17 @@ router.post('/image', function(req, res){
 	var obj = req.body.body.slice(22);
 	var tags;
 
-			Clarifai.getTagsByImageBytes(obj).then((response) => {
-				tags = response.results[0]["result"].tag.classes;
-				console.log('Got response', tags);
-				tags = JSON.stringify(tags);
-				res.end(tags);
+	Clarifai.getTagsByImageBytes(obj).then((response) => {
+		tags = response.results[0]["result"].tag.classes;
+		console.log('Got response', tags);
+		tags = JSON.stringify(tags);
+		res.end(tags);
 
-			}).catch((err) => {
-				console.error('Encountered error making request:', err);
-				tags = JSON.stringify(tags);
-				res.end(tags);
-			});
+	}).catch((err) => {
+		console.error('Encountered error making request:', err);
+		tags = JSON.stringify(tags);
+		res.end(tags);
+	});
 
 
 

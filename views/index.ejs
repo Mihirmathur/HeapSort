@@ -52,7 +52,7 @@
 
       </div>
       <div class="chart" id="word_cloud">
-
+          <svg id="wordcloudSVG"></svg>
       </div>
     </div>
   </div>
@@ -81,6 +81,27 @@
   var recycle = ["drink", "can", "bottle", "container", "plastic", "eyewear", "table", "chair"];
 
 
+  function ConvertToCSV(objArray) {
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = '';
+
+    for (var i = 0; i < array.length; i++) {
+      var line = '';
+      for (var index in array[i]) {
+        if (line != '') line += ','
+
+          line += array[i][index];
+      }
+
+      str += line + '\r\n';
+    }
+
+    return str;
+  }
+
+
+
+
   function take_snapshot() {
     Webcam.snap( function(data_uri) {
       $('#my_camera').toggle(500);
@@ -89,8 +110,8 @@
         console.log(data_uri);
         $('#my_result').toggle(500);
         //window.location.href = '/'+'\''+data_uri.toString()+'\'';
-
-        
+        temp = 4;
+        paper.project.view.update();
 
         $.ajax({
           method: "POST",
@@ -138,7 +159,7 @@
           }
 
           
-         setTimeout(function(){
+          setTimeout(function(){
             temp = 3;
             
             paper.project.view.update();
@@ -179,8 +200,79 @@
   $(document).ready(function(){
     var composition = <%- JSON.stringify(comp) %>;
     var wordCloud =  <%- JSON.stringify(cloud) %>;
+
+
+
+
+
+
     $("#analytics").animatedModal();
     $("#analytics2").animatedModal();
+
+
+
+    var diameter = 500, //max size of the bubbles
+    color    = d3.scale.category20b(); //color category
+
+    var bubble = d3.layout.pack()
+    .sort(null)
+    .size([diameter, diameter])
+    .padding(1.5);
+
+    var svg = d3.select("#word_cloud")
+    .append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+    .attr("class", "bubble");
+
+    //var cloudCSV = ConvertToCSV(JSON.stringify([wordCloud]));
+    var cloudCSV = ["Tag", "Amount"];
+    for(val in wordCloud){
+      cloudCSV.push(val);
+      cloudCSV.push(wordCloud[val]);
+    }
+    //console.log(wordCloud);
+    cloudCSV= cloudCSV.join(",").toString();
+    //console.log(cloudCSV);
+
+    d3.csv("test.csv", function(error, data){
+
+    //convert numerical values from strings to numbers
+    data = data.map(function(d){ d.value = +d["Amount"]; return d; });
+
+    console.log("Data = "+ data);
+
+    //bubbles needs very specific format, convert data to this.
+    var nodes = bubble.nodes({children:data}).filter(function(d) { return !d.children; });
+
+    //setup the chart
+    var bubbles = svg.append("g")
+    .attr("transform", "translate(0,0)")
+    .selectAll(".bubble")
+    .data(nodes)
+    .enter();
+
+    //create the bubbles
+    bubbles.append("circle")
+    .attr("r", function(d){ return d.r; })
+    .attr("cx", function(d){ return d.x; })
+    .attr("cy", function(d){ return d.y; })
+    .style("fill", function(d) { return color(d.value); });
+
+    //format the text for each bubble
+    bubbles.append("text")
+    .attr("x", function(d){ return d.x; })
+    .attr("y", function(d){ return d.y + 5; })
+    .attr("text-anchor", "middle")
+    .text(function(d){ return d["Tag"]; })
+    .style({
+      "fill":"white", 
+      "font-family":"Helvetica Neue, Helvetica, Arial, san-serif",
+      "font-size": "12px"
+    });
+  })     
+
+
 
     var data = composition;
     var layout = {

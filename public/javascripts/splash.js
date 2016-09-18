@@ -95,6 +95,9 @@ function onFrame(event) {
     else if(temp==3){
         path.fillColor = "#222222";
     }
+    else{
+        path.fillColor = "#00A2E2";
+    }
 }
 
 function updateWave(path) {
