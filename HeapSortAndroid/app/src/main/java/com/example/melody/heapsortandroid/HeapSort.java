@@ -201,7 +201,10 @@ public class HeapSort extends AppCompatActivity {
                     }
                 });
                 confirm.setMessage("Send results to Firebase?");
-                confirm.create().show();
+//                confirm.create().show();
+                Firebase timestamp = firebase.child("history").push();
+                timestamp.child("tags").setValue(tagNames);
+                timestamp.child("category").setValue(finalMaxCategory);
 
                 String tagsToPrint ="";
                 for(String i: tagNames){
