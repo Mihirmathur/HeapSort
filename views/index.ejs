@@ -86,9 +86,26 @@ src="https://api.filestackapi.com/filestack.js"></script>
           method: "POST",
           url:"/image",
           data:data_uri,
-          dataType: "text",
+          dataType: "text"
         }).done(function(res){
             console.log(res);
+            setTimeout(function(){
+             $('#my_result').toggle(500); 
+             $('#cam_trigger').html("Compost!");
+             $('#middle_circ').toggle(500);
+            }, 2000)
+        })
+        .fail(function(res){
+          console.log(res);
+          
+            setTimeout(function(){
+              temp = 1;
+          FillColor = "#84DCC6";
+              paper.project.view.update();
+             $('#my_result').toggle(500); 
+             $('#cam_trigger').html("Compost!");
+             $('.middle_circ').toggle(500);
+            }, 2000)
         })
 
 

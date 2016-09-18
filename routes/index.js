@@ -28,10 +28,10 @@ router.get('/', function(req, res) {
 
 function getTags(){
 	Clarifai.getTagsByUrl("hi.jpg").then((response) => {
-				console.log('Got response', response);
-			}).catch((err) => {
-				console.error('Encountered error making request:', err);
-			});
+		console.log('Got response', response);
+	}).catch((err) => {
+		console.error('Encountered error making request:', err);
+	});
 }
 
 
